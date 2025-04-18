@@ -5,6 +5,7 @@ import org.example.expert.domain.comment.dto.response.CommentSaveResponse;
 import org.example.expert.domain.comment.entity.Comment;
 import org.example.expert.domain.comment.repository.CommentRepository;
 import org.example.expert.domain.common.dto.AuthUser;
+import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.common.exception.ServerException;
 import org.example.expert.domain.todo.entity.Todo;
 import org.example.expert.domain.todo.repository.TodoRepository;
@@ -43,7 +44,14 @@ class CommentServiceTest {
         given(todoRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when
-        ServerException exception = assertThrows(ServerException.class, () -> {
+        // 어떤 todoId로 접근해도 findById에서 비어있는 Optional 을 리턴하기 때문에
+//        Todo todo = todoRepository.findById(todoId).orElseThrow(() ->
+//                new InvalidRequestException("Todo not found"));
+        // InvalidRequestException("Todo not found")가 발생한다.
+//        ServerException exception = assertThrows(ServerException.class, () -> {
+//            commentService.saveComment(authUser, todoId, request);
+//        });
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
             commentService.saveComment(authUser, todoId, request);
         });
 
