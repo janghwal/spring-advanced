@@ -35,7 +35,14 @@ public class ManagerService {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new InvalidRequestException("Todo not found"));
 
-        if (!ObjectUtils.nullSafeEquals(user.getId(), todo.getUser().getId())) {
+//        if (!ObjectUtils.nullSafeEquals(user.getId(), todo.getUser().getId())) {
+//            throw new InvalidRequestException("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.");
+//        }
+
+        // todo.getUser()가 null일 경우 null.getId()가 되면서 NullPointerException이 먼저 발생한다.
+        // 테스트에 NullPointerException이 전달되어 테스트 실패
+        // todo.getUser() == null를 먼저 비교 한 후 null인 경우 InvalidRequestException을 발생시키도록 한다.
+        if (todo.getUser() == null || !ObjectUtils.nullSafeEquals(user.getId(), todo.getUser().getId())) {
             throw new InvalidRequestException("담당자를 등록하려고 하는 유저가 일정을 만든 유저가 유효하지 않습니다.");
         }
 
